@@ -34,7 +34,7 @@ const LocationView = () => {
 
   const [formData, setFormData] = useState({
     locationName: " ",
-    email: " ",
+    email: "",
     phone: " ",
     faxNumber: " ",
     locationHead: " ",
@@ -68,7 +68,7 @@ const LocationView = () => {
       formData
     );
     alert("Location saved successfully");
-    navigate("/location");
+    navigate("/organisation/location");
     loadLocation();
     setFormData({
       locationName: "",
@@ -145,17 +145,17 @@ const LocationView = () => {
                     setToggle(!toggle);
                     handleButtonClick();
                   }}
-                  style={{ height: "35px" }}
+                  style={{ height: "35px", margin:"0 0 10px"}}
                 >
                   {toggle ? (
-                    <div>
+                    <div className="hide">
                       <BiSolidHide
                         style={{ fontSize: "14px", marginRight: "3px" }}
                       />
                       HIDE
                     </div>
                   ) : (
-                    <div>
+                    <div className="add">
                       <MdAdd style={{ fontSize: "14px", marginRight: "3px" }} />
                       ADD LOCATION
                     </div>
@@ -181,7 +181,9 @@ const LocationView = () => {
                   </h3>
                   <DialogContent>
                     <form onSubmit={handleSubmit}>
-                      <div style={{ display: "flex" }}>
+                      <div className="data-input-fields">
+                     
+
                         <FormControl fullWidth>
                           <InputLabel id="demo-company-select-label">
                             Company Name
@@ -190,10 +192,10 @@ const LocationView = () => {
                             labelId="demo-company-select-label"
                             id="selectedCompany"
                             value={formData.companyName}
-                            name="companyName"
                             label="Company Name"
                             onChange={(e) => handleInputChange(e)}
                             required
+                            name="companyName"
                           >
                             {company.map((item, index) => {
                               return (
@@ -215,10 +217,10 @@ const LocationView = () => {
                           value={formData.locationHead}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "0 3px" }}
+                         
                         />
                       </div>
-                      <div style={{ display: "flex" }}>
+                      <div className="data-input-fields">
                         <TextField
                           margin="dense"
                           label="location"
@@ -229,7 +231,7 @@ const LocationView = () => {
                           value={formData.locationName}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
+                      
                         />
 
                         <TextField
@@ -242,24 +244,10 @@ const LocationView = () => {
                           value={formData.address}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
                         />
                       </div>
-                      {/* <TextField
-                  margin="dense"
-                  label="address2"
-                  type="text"
-                  fullWidth
-                  name="address2"
-                  id="address2"
-                  value={address2}
-                  onChange={(e) => handleInputChange(e)}
-                  required
-                  style={{ margin: "0 3px" }}
-                />
-              </div> */}
-
-                      <div style={{ display: "flex" }}>
+                     
+                      <div className="data-input-fields">
                         <TextField
                           margin="dense"
                           label="email"
@@ -270,7 +258,6 @@ const LocationView = () => {
                           value={formData.email}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
                         />
                         <TextField
                           margin="dense"
@@ -282,7 +269,7 @@ const LocationView = () => {
                           value={formData.phone}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
+                          
                         />
                         <TextField
                           margin="dense"
@@ -294,11 +281,11 @@ const LocationView = () => {
                           value={formData.faxNumber}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
+ 
                         />
                       </div>
-
-                      <Button
+<div className="data-buttons">
+<Button
                         type="submit"
                         onClick={saveLocation}
                         style={{
@@ -314,7 +301,7 @@ const LocationView = () => {
                         Submit
                       </Button>
                       <Button
-                        onClick={"/location"}
+                        onClick={() => setFormVisible(false)}
                         style={{
                           background:
                             "linear-gradient(to left, #1cb5e0, #000046)",
@@ -327,6 +314,8 @@ const LocationView = () => {
                       >
                         Cancel
                       </Button>
+</div>
+                    
                     </form>
                   </DialogContent>
                   {/* </Dialog> */}
@@ -334,6 +323,8 @@ const LocationView = () => {
               </Card>
             </Collapse>
             <br />
+
+            
             <table className="table table-bordered table-hover shadow">
               <thead>
                 <tr className="text-center">

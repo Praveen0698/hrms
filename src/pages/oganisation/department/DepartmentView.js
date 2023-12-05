@@ -64,7 +64,7 @@ const DepartmentView = () => {
       formData
     );
     alert("Department added successfully");
-    navigate("/department ");
+    navigate("/organisation/department ");
     loadDepartment();
     setFormData({
       locationName: "",
@@ -170,6 +170,32 @@ const DepartmentView = () => {
     },
   ];
 
+  const headNames = [{
+    val:"Sarmistha jena"
+  },
+    {
+    val:"Sumit Rana"
+  },
+    {
+    val:"Sourav Moharana"
+  },
+  {
+    val:"Pritam behera"
+  },{
+    val:"Subhashree"
+  },
+  {
+    val:"Hrushikesh"
+  },
+  {
+    val:"Aditi"
+  },
+  {
+    val:"Subham}"
+  }]
+
+  console.log(headNames)
+console.log(department)
   return (
     <div>
       <Header />
@@ -188,17 +214,17 @@ const DepartmentView = () => {
                     setToggle(!toggle);
                     handleButtonClick();
                   }}
-                  style={{ height: "35px" }}
+                  style={{ height: "35px", margin:"0 0 10px" }}
                 >
                   {toggle ? (
-                    <div>
+                    <div className="hide">
                       <BiSolidHide
                         style={{ fontSize: "14px", marginRight: "3px" }}
                       />
                       HIDE
                     </div>
                   ) : (
-                    <div>
+                    <div className="add">
                       <MdAdd style={{ fontSize: "14px", marginRight: "3px" }} />
                       ADD DEPARTMENT
                     </div>
@@ -209,7 +235,7 @@ const DepartmentView = () => {
             <Collapse in={formVisible}>
               <Card
                 variant="outlined"
-                style={{ boxShadow: " 1px 1px 10px black" }}
+                style={{ boxShadow: " 1px 1px 5px black" }}
               >
                 <div style={{ marginTop: "20px" }}>
                   <h3
@@ -223,8 +249,8 @@ const DepartmentView = () => {
                   </h3>
                   <DialogContent>
                     <form onSubmit={handleSubmit}>
-                      <div style={{ display: "flex" }}>
-                        <FormControl fullWidth style={{ margin: "0 3px" }}>
+                      <div className="data-input-fields">
+                        <FormControl fullWidth>
                           <InputLabel id="departmentName-label">
                             Department Name
                           </InputLabel>
@@ -252,7 +278,8 @@ const DepartmentView = () => {
                             id="selectedCompany"
                             value={formData.companyName}
                             label="Company Name"
-                            onChange={(e) => handleInputChange(e.target.value)}
+                            onChange={(e) => handleInputChange(e)}
+                            name="companyName"
                             required
                           >
                             {company.map((item, index) => {
@@ -265,7 +292,7 @@ const DepartmentView = () => {
                           </Select>
                         </FormControl>
                       </div>
-                      <div style={{ display: "flex" }}>
+                      <div className="data-input-fields">
                         <FormControl fullWidth>
                           <InputLabel id="demo-simple-select-label">
                             Department Head
@@ -279,14 +306,13 @@ const DepartmentView = () => {
                             onChange={(e) => handleInputChange(e)}
                             required
                           >
-                            <MenuItem value={10}>Sarmistha Jena</MenuItem>
-                            <MenuItem value={20}>Sumit Rana</MenuItem>
-                            <MenuItem value={30}>Smruti Sourav</MenuItem>
-                            <MenuItem value={40}>Pritam Behera</MenuItem>
-                            <MenuItem value={50}>Praveen Khuntia</MenuItem>
-                            <MenuItem value={60}>Hrushikesh Jena</MenuItem>
-                            <MenuItem value={70}>Subhashree Das</MenuItem>
-                            <MenuItem value={80}>Subham</MenuItem>
+                          {
+                            headNames.map((headName,index) => {
+                              return <MenuItem key={index} value={headName.val}>{headName.val}</MenuItem>
+                          
+                            })
+                          }
+                           
                           </Select>
                         </FormControl>
 
@@ -313,12 +339,13 @@ const DepartmentView = () => {
                             width: "100%",
                             color: "white",
                           }}
+
                         >
                           Submit
                         </Button>
                         <Button
                           variant="outlined"
-                          // onClick={}
+                          onClick={() => setFormVisible(false)}
                           style={{
                             background:
                               "linear-gradient(to left, #1cb5e0, #000046)",
