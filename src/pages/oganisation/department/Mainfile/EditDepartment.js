@@ -4,6 +4,9 @@ import React, {
 } from "react";
 import axios from "axios";
 
+import SideBar from "../../../../components/SideBar";
+import Header from "../../../../components/Header";
+
 import {
   Link,
   useNavigate,
@@ -14,6 +17,7 @@ const EditDepartment = () => {
   let navigate = useNavigate();
 
   const { id } = useParams();
+  console.log(id)
 
   const [department, setDepartment] = useState({
     departmentName: "",
@@ -31,7 +35,7 @@ const EditDepartment = () => {
 
   const loadDepartment = async () => {
     const result = await axios.get(
-      `http://localhost:8083/department/get/${id}`
+      `http://localhost:8081/department/get/${id}`
     );
     setDepartment(result.data);
   };
@@ -45,14 +49,19 @@ const EditDepartment = () => {
   const updateDepartment = async (e) => {
     e.preventDefault();
     await axios.put(
-      `http://localhost:8083/department/update/${id}`,
+      `http://localhost:8081/department/update/${id}`,
       department
     );
     navigate("/view-department");
   };
 
   return (
-    <div className="col-sm-8 py-2 px-5 offset-2 shadow">
+    <div>
+    <Header />
+    <div className="dashboard-container">
+      <SideBar />
+      <div className="head-foot-part" style={{ padding: "0" }}>
+      <div className="col-sm-8 py-2 px-5 offset-2 shadow">
       <h2 className="mt-5"> Edit Department</h2>
       <form onSubmit={(e) => updateDepartment(e)}>
         <div className="input-group mb-5">
@@ -134,7 +143,7 @@ const EditDepartment = () => {
 
           <div className="col-sm-2">
             <Link
-              to={"/view-department"}
+              to={"/organisation/department"}
               type="submit"
               className="btn btn-outline-warning btn-lg">
               Cancel
@@ -143,6 +152,10 @@ const EditDepartment = () => {
         </div>
       </form>
     </div>
+      </div>
+    </div>
+  </div>
+  
   );
 };
 

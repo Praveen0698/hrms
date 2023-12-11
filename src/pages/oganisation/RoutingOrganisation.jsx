@@ -3,11 +3,14 @@ import { Route, Routes } from "react-router-dom";
 import Dashboard from "../../components/Dashboard";
 import CompanyView from "./company/CompanyView";
 import LocationView from "./location/LocationView";
-import DepartmentView from "./department/DepartmentView";
+import DepartmentView from "./department/Mainfile/DepartmentView";
 import DesignationView from "./designation/DesignationView";
 import PoliciesView from "./Policies/PoliciesView";
 import AnnouncementsView from "./announcements/AnnouncementsView";
 import ExpensesView from "./expenses/ExpensesView";
+
+import DepartmentProfile from "./department/Mainfile/DepartmentProfile";
+import EditDepartment from "./department/Mainfile/EditDepartment";
 
 const RoutingOrganisation = () => {
   return (
@@ -16,6 +19,12 @@ const RoutingOrganisation = () => {
         <Routes>
           <Route path="/" exact element={<Dashboard />} />
           <Route path="/organisation/company" exact element={<CompanyView />} />
+          <Route
+            path="/organisation/department-profile/:id"
+            exact
+            element={<DepartmentProfile />}
+          />
+           <Route path={"/organisation/edit-department/:id"} element={<EditDepartment />}/>
           <Route
             path="/organisation/location"
             exact

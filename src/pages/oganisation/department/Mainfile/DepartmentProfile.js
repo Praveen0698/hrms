@@ -4,6 +4,8 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import Header from "../../../../components/Header";
+import SideBar from "../../../../components/SideBar";
 
 const DepartmentProfile = () => {
   const { id } = useParams();
@@ -21,13 +23,18 @@ const DepartmentProfile = () => {
 
   const loadDepartment = async () => {
     const result = await axios.get(
-      `http://localhost:8083/department/get/${id}`
+      `http://localhost:8081/department/get/${id}`
     );
     setDepartment(result.data);
   };
 
   return (
-    <section
+    <div>
+    <Header />
+    <div className="dashboard-container">
+      <SideBar />
+      <div className="head-foot-part" style={{ padding: "0" }}>
+      <section
       className="shadow"
       style={{ backgroundColor: "whitesmoke" }}>
       <div className="container py-5">
@@ -130,6 +137,10 @@ const DepartmentProfile = () => {
         </div>
       </div>
     </section>
+      </div>
+    </div>
+  </div>
+   
   );
 };
 

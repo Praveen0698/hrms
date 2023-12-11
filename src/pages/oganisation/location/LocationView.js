@@ -11,30 +11,26 @@ import TextField from "@mui/material/TextField";
 import { MdAdd } from "react-icons/md";
 import Collapse from "@mui/material/Collapse";
 import { BiSolidHide } from "react-icons/bi";
-import { Card, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Card } from "@mui/material";
 
 const LocationView = () => {
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [phoneError, setPhoneError] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [company, setCompany] = useState([]);
-  // const [selectedCompany, setSelectedCompany] = useState(""); // Fixed the capitalization here
   let navigate = useNavigate();
-  // const onSelectCompany = (selectedCompany) => {
-  //   setSelectedCompany(selectedCompany);
-  //   navigate("/location");
-  // };
+
 
   const handleButtonClick = () => {
     setFormVisible((prev) => !prev);
   };
 
   const [location, setLocation] = useState([]);
-  const [search, setSearch] = useState("");
-  // const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     locationName: " ",
-    email: "",
+    email: " ",
     phone: " ",
     faxNumber: " ",
     locationHead: " ",
@@ -42,27 +38,38 @@ const LocationView = () => {
     companyName: " ",
   });
 
-  //   let {
-  //     locationName,
-  //     email,
-  //     phone,
-  //     faxNumber,
-  //     locationHead,
-  //     locationHrManager,
-  //     address,
-  //  companyName
-  //   } = location;
+
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    const isValidLength = value.length >= 2 && value.length <= 40;
+    setAddressError(!isValidLength);
+
+    if (name === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setIsEmailValid(emailRegex.test(value));
+    }
+    if (name === 'phone') {
+      // Validate phone number format
+      const isValidPhoneNumber = /^\d{10}(-\d{1,4})?$/.test(value);
+      setPhoneError(!isValidPhoneNumber);
+    }
+
+    const isValidFax = /^\d{10}$/.test(value);
+    setFaxError(!isValidFax);
     setFormData({
       ...formData,
+      [name]: value,
       [e.target.name]: e.target.value,
-      // companyName:selectedCompany
+
     });
   };
 
+ 
+
   const saveLocation = async (e) => {
-    e.preventDefault();
+
     await axios.post(
       "http://localhost:8081/location/create/location",
       formData
@@ -80,6 +87,29 @@ const LocationView = () => {
       companyName: "",
     });
   };
+  
+  // const handlePhoneChange = (e) => {
+  //   const value = e.target.value;
+  //   setPhoneNumber(value);
+
+  //   const isValid = /^\d{10}(-\d{1,4})?$/.test(value);
+  //   setPhoneError(!isValid);
+  // };
+
+  const [faxError, setFaxError] = useState(false);
+
+  
+
+  // const handleEmailChange = (e) => {
+  //   const inputEmail = e.target.value;
+  //   setEmail(inputEmail);
+
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   setIsEmailValid(emailRegex.test(inputEmail));
+  // };
+  const [addressError, setAddressError] = useState(false);
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -127,6 +157,10 @@ const LocationView = () => {
     loadLocation();
   };
 
+  const enforceMaxLength = (value, maxLength) => {
+    return value.length <= maxLength ? value : value.slice(0, maxLength)
+  }
+
   return (
     <div>
       <Header />
@@ -145,18 +179,16 @@ const LocationView = () => {
                     setToggle(!toggle);
                     handleButtonClick();
                   }}
-                  style={{ height: "35px", margin:"0 0 10px"}}
+                  style={{ height: "35px", marginBottom: "10px " }}
                 >
                   {toggle ? (
                     <div className="hide">
-                      <BiSolidHide
-                        style={{ fontSize: "14px", marginRight: "3px" }}
-                      />
+                      <BiSolidHide />
                       HIDE
                     </div>
                   ) : (
                     <div className="add">
-                      <MdAdd style={{ fontSize: "14px", marginRight: "3px" }} />
+                      <MdAdd />
                       ADD LOCATION
                     </div>
                   )}
@@ -182,34 +214,33 @@ const LocationView = () => {
                   <DialogContent>
                     <form onSubmit={handleSubmit}>
                       <div className="data-input-fields">
-                     
-
-                        <FormControl fullWidth>
-                          <InputLabel id="demo-company-select-label">
-                            Company Name
-                          </InputLabel>
-                          <Select
-                            labelId="demo-company-select-label"
-                            id="selectedCompany"
-                            value={formData.companyName}
-                            label="Company Name"
-                            onChange={(e) => handleInputChange(e)}
-                            required
-                            name="companyName"
-                          >
-                            {company.map((item, index) => {
-                              return (
-                                <MenuItem key={index} value={item.companyName}>
-                                  {item.companyName}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </FormControl>
+                      <TextField
+                          id="companyName"
+                          margin="dense"
+                          select
+                          label="Company Name"
+                          fullWidth
+                          defaultValue="Choose"
+                          SelectProps={{
+                            native: true,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          value={formData.companyName}
+                          onChange={(e) => handleInputChange(e)}
+                          name="companyName"
+                        >
+                          {company.map((option, index) => (
+                            <option key={index} value={option.companyName}>
+                                {option.companyName}
+                              </option>
+                          ))}
+                        </TextField>
 
                         <TextField
                           margin="dense"
-                          label="locationHead"
+                          label="Location Head"
                           type="text"
                           fullWidth
                           name="locationHead"
@@ -217,13 +248,12 @@ const LocationView = () => {
                           value={formData.locationHead}
                           onChange={(e) => handleInputChange(e)}
                           required
-                         
                         />
                       </div>
                       <div className="data-input-fields">
                         <TextField
                           margin="dense"
-                          label="location"
+                          label="Location"
                           type="text"
                           fullWidth
                           name="locationName"
@@ -231,26 +261,31 @@ const LocationView = () => {
                           value={formData.locationName}
                           onChange={(e) => handleInputChange(e)}
                           required
-                      
                         />
 
                         <TextField
                           margin="dense"
-                          label="address1"
+                          label="Address"
                           type="text"
                           fullWidth
                           name="address"
                           id="address"
                           value={formData.address}
-                          onChange={(e) => handleInputChange(e)}
                           required
+                          error={addressError}
+                          helperText={addressError && "Address must be between 2 and 40 characters"}
+                          inputProps={{ minLength: 2, maxLength: 40 }}
+                          onInput={(e) => {
+                            e.target.value = enforceMaxLength(e.target.value, 40);
+                            handleInputChange(e);
+                          }}
                         />
                       </div>
-                     
+
                       <div className="data-input-fields">
                         <TextField
                           margin="dense"
-                          label="email"
+                          label="Email"
                           type="email"
                           fullWidth
                           name="email"
@@ -258,10 +293,13 @@ const LocationView = () => {
                           value={formData.email}
                           onChange={(e) => handleInputChange(e)}
                           required
+                          error={!isEmailValid}
+                          helperText={!isEmailValid && "Please enter a valid email address."}
                         />
-                        <TextField
+
+<TextField
                           margin="dense"
-                          label="phone"
+                          label="Phone"
                           type="number"
                           fullWidth
                           name="phone"
@@ -269,53 +307,57 @@ const LocationView = () => {
                           value={formData.phone}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          
+                          error={phoneError}
+                          helperText={phoneError ? "Invalid phone number" : ""}
                         />
+                        
                         <TextField
                           margin="dense"
-                          label="faxnumber"
-                          type="number"
+                          label="Fax Number"
+                          type="number"  // Change the type to "text" to allow non-numeric characters
                           fullWidth
                           name="faxNumber"
                           id="faxNumber"
                           value={formData.faxNumber}
                           onChange={(e) => handleInputChange(e)}
                           required
- 
+                          error={faxError}
+                          helperText={faxError ? "Invalid fax number (must be 10 digits)" : ""}
                         />
                       </div>
-<div className="data-buttons">
-<Button
-                        type="submit"
-                        onClick={saveLocation}
-                        style={{
-                          background:
-                            "linear-gradient(to right, #1cb5e0, #000046)",
-                          height: "35px",
-                          width: "48%",
-                          color: "white",
-                          margin: "0 7px",
-                        }}
-                        variant="outlined"
-                      >
-                        Submit
-                      </Button>
-                      <Button
-                        onClick={() => setFormVisible(false)}
-                        style={{
-                          background:
-                            "linear-gradient(to left, #1cb5e0, #000046)",
-                          height: "35px",
-                          width: "48%",
-                          color: "white",
-                          margin: "0 7px",
-                        }}
-                        variant="outlined"
-                      >
-                        Cancel
-                      </Button>
-</div>
-                    
+
+                      <div className="data-buttons">
+                        <Button
+                          type="submit"
+                          onClick={saveLocation}
+                          style={{
+                            background:
+                              "linear-gradient(to right, #1cb5e0, #000046)",
+                            height: "35px",
+                            width: "48%",
+                            color: "white",
+                            margin: "0 7px",
+                          }}
+                          variant="outlined"
+                        >
+                          Submit
+                        </Button>
+                        <Button
+                          onClick={"/location"}
+                          style={{
+                            background:
+                              "linear-gradient(to left, #1cb5e0, #000046)",
+                            height: "35px",
+                            width: "48%",
+                            color: "white",
+                            margin: "0 7px",
+                          }}
+                          variant="outlined"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+
                     </form>
                   </DialogContent>
                   {/* </Dialog> */}
@@ -323,8 +365,6 @@ const LocationView = () => {
               </Card>
             </Collapse>
             <br />
-
-            
             <table className="table table-bordered table-hover shadow">
               <thead>
                 <tr className="text-center">
