@@ -3,9 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import Dashboard from "../../components/Dashboard";
 import CompanyView from "./company/CompanyView";
 import LocationView from "./location/LocationView";
-import DepartmentView from "./department/DepartmentView";
+import DepartmentView from "./department/Mainfile/DepartmentView";
 import DesignationView from "./designation/DesignationView";
-import PoliciesView from "./Policies/PoliciesView";
+import PoliciesView from "./Policies/PoliciesView"
 import AnnouncementsView from "./announcements/AnnouncementsView";
 import ExpensesView from "./expenses/ExpensesView";
 

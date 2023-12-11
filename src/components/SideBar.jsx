@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const SideBar = () => {
   const [dropdown, setDropdown] = useState("org-dropdown");
@@ -96,6 +96,8 @@ const SideBar = () => {
     }
   };
 
+
+  const navigation = useNavigate()
   return (
     <>
       <div className="sidebar-container">
@@ -142,7 +144,7 @@ const SideBar = () => {
             style={{ color: "white", textDecoration: "none" }}
             to={"/organisation/announcements"}
           >
-            <p>Announcements</p>
+            <p >Announcements</p>
           </Link>
           <Link
             style={{ color: "white", textDecoration: "none" }}
@@ -155,75 +157,86 @@ const SideBar = () => {
           Employees<i className="fa-solid fa-caret-down"></i>
         </p>
         <div className={empDropdown}>
-          <Link
+          
+            <p onClick={() => navigation('/employee/employees')}>Employees</p>
+            <p onClick={() => navigation ('/employee/setroles')}>SetRoles</p>
+            <p  onClick={() => navigation ('/employee/awards')}>Awards</p>
+            <p onClick={() => navigation ('/employee/transfers')}>Transfers</p>
+            <p onClick={() => navigation ('/employee/resignation')}>Resignation</p>
+            
+            <p onClick={() => navigation ('/employee/travels')}>Travels</p>
+            <p onClick={() => navigation ('/employee/promotions')}>Promotions</p>
+            <p onClick={() => navigation ('/employee/complaints')}>Complaints</p>
+            <p onClick={() => navigation ('/employee/warnings')}>Warnings</p>
+            <p onClick={() => navigation ('/employee/termination')}>Termination</p>
+            <p onClick={() => navigation ('/employee/lastlogin')}>Last Login</p>
+            <p onClick={() => navigation ('/employee/employeeExit')}>Employee Exit</p>
+          
+          
+         
+          {/* <Link
             style={{ color: "white", textDecoration: "none" }}
-            to={"/employee"}
+            to={"employee/setroles"}
           >
-            <p>Employees</p>
+            <p onClick={() => navigation ('/employee/setroles')}>SetRoles</p>
           </Link>
-          <Link
+          <Link style={{ color: "white", textDecoration: "none" }} to="employee/awards">
+            <p  onClick={() => navigation ('/employee/awards')}>Awards</p>
+          </Link> */}
+          {/* <Link
             style={{ color: "white", textDecoration: "none" }}
-            to={"/setRole"}
+            to={"employee/transfers"}
           >
-            <p>SetRoles</p>
-          </Link>
-          <Link style={{ color: "white", textDecoration: "none" }} to="/award">
-            <p>Awards</p>
-          </Link>
-          <Link
+            <p onClick={() => navigation ('/employee/transfers')}>Transfers</p>
+          </Link> */}
+          {/* <Link
             style={{ color: "white", textDecoration: "none" }}
-            to={"/transfer"}
+            to={"employee/resignation"}
           >
-            <p>Transfers</p>
-          </Link>
-          <Link
+            <p onClick={() => navigation ('/employee/resignation')}>Resignation</p>
+          </Link> */}
+          {/* <Link
             style={{ color: "white", textDecoration: "none" }}
-            to={"/resignation"}
+            to={"employee/travels"}
           >
-            <p>Resignation</p>
-          </Link>
-          <Link
+            <p onClick={() => navigation ('/employee/travels')}>Travels</p>
+          </Link> */}
+          {/* <Link
             style={{ color: "white", textDecoration: "none" }}
-            to={"/travel"}
+            to={"employee/promotions"}
           >
-            <p>Travels</p>
-          </Link>
-          <Link
-            style={{ color: "white", textDecoration: "none" }}
-            to={"/promotion"}
-          >
-            <p>Promotions</p>
-          </Link>
-          <Link
-            style={{ color: "white", textDecoration: "none" }}
-            to={"/complaint"}
-          >
-            <p>Complaints</p>
-          </Link>
-          <Link
-            style={{ color: "white", textDecoration: "none" }}
-            to={"/warning"}
-          >
-            <p>Warnings</p>
-          </Link>
-          <Link
-            style={{ color: "white", textDecoration: "none" }}
-            to={"/termination"}
-          >
-            <p>Termination</p>
+            <p onClick={() => navigation ('/employee/promotions')}>Promotions</p>
           </Link>
           <Link
             style={{ color: "white", textDecoration: "none" }}
-            to={"/lastLogin"}
+            to={"employee/complaints"}
           >
-            <p>Last Login</p>
+            <p onClick={() => navigation ('/employee/complaints')}>Complaints</p>
+          </Link> */}
+          {/* <Link
+            style={{ color: "white", textDecoration: "none" }}
+            to={"employee/warnings"}
+          >
+            <p onClick={() => navigation ('/employee/warnings')}>Warnings</p>
           </Link>
           <Link
             style={{ color: "white", textDecoration: "none" }}
-            to={"/employeeExit"}
+            to={"employee/termination"}
           >
-            <p>Employee Exit</p>
-          </Link>
+            <p onClick={() => navigation ('/employee/termination')}>Termination</p>
+          </Link> */}
+          {/* <Link
+            style={{ color: "white", textDecoration: "none" }}
+            to={"employee/lastLogin"}
+          >
+            <p onClick={() => navigation ('/employee/lastlogin')}>Last Login</p>
+          </Link> */}
+          {/* <Link
+            style={{ color: "white", textDecoration: "none" }}
+            to={"employee/employeeExit"}
+          >
+            <p onClick={() => navigation ('/employee/employeeExit')}>Employee Exit</p>
+          </Link> */}
         </div>
         <p id="dropdown" onClick={handlePerclick}>
           Performance<i className="fa-solid fa-caret-down"></i>
@@ -321,3 +334,4 @@ const SideBar = () => {
 };
 
 export default SideBar;
+   

@@ -11,8 +11,22 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { MdAdd } from "react-icons/md";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 const PoliciesView = () => {
+
+  const getCurrentDate = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = `${now.getMonth() + 1}`.padStart(2, '0');
+    const day = `${now.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const [descriptionError,setDescriptionError]= useState(false);
   const [policies, setPolicies] = useState([]);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -24,11 +38,17 @@ const PoliciesView = () => {
     setSelectedCompany(selectedCompany);
     navigate("/policies");
   };
+
   const [formData, setFormData] = useState({
     companyName: "",
     title: "",
     description: "",
+    createdDate: " ",
+    chooseFile: null,
+    createdDate: getCurrentDate(),
   });
+
+  const [titleError, setTitleError] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -39,25 +59,60 @@ const PoliciesView = () => {
   };
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+
+    const { name, value, files } = e.target;
+
+    if (name === 'description') {
+      const isValidDescription = value.length >= 2 && value.length <= 200;
+      setDescriptionError(!isValidDescription);
+    }
+
+    if (name === "title") {
+      // Validate title length (between 2 and 50 characters)
+      const isValidLength = value.length >= 5 && value.length <= 30;
+      setTitleError(!isValidLength);
+    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'chooseFile' ? files[0] : value,
+
+
+    }));
+
+    if (name === 'createdDate') {
+      
+      const isValidDate = value === getCurrentDate();
+      setDateError(!isValidDate);
+    }
+
+
   };
+
+  const [dateError, setDateError] = useState(false);
+
+
+  
 
   const savePolicies = async (e) => {
     e.preventDefault();
+
     try {
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+
       await axios.post(
-        "http://localhost:8083/policies/create/policies",
-        formData
+        "http://localhost:8081/policies/create/policies",
+        formDataToSend
       );
-      navigate("/policies");
+
+      navigate("/organisation/policies");
       loadPolicies();
       alert("Added Successfully");
       handleClose();
     } catch (error) {
-      console.error("Error saving expenses:", error);
+      console.error("Error saving policies:", error);
     }
   };
 
@@ -75,19 +130,20 @@ const PoliciesView = () => {
   const loadPolicies = async () => {
     try {
       const result = await axios.get(
-        "http://localhost:8083/policies/get/policies"
+        "http://localhost:8081/policies/get/policies"
       );
       setPolicies(result.data);
     } catch (error) {
       console.error("Error loading expenses:", error);
     }
   };
+
   const fetchCompany = async () => {
     try {
       const response = await axios.get(
         "http://localhost:8081/company/get/company"
       );
-      console.log(response.data); // Log the response data
+      // console.log(response.data); // Log the response data
       setCompany(response.data);
     } catch (error) {
       console.error("Error fetching department data", error);
@@ -97,7 +153,7 @@ const PoliciesView = () => {
   const handleDelete = async (id) => {
     try {
       console.log(id);
-      await axios.delete(`http://localhost:8083/policies/delete/${id}`);
+      await axios.delete(`http://localhost:8081/policies/delete/${id}`);
       loadPolicies();
     } catch (error) {
       console.error("Error deleting expense:", error);
@@ -134,8 +190,6 @@ const PoliciesView = () => {
                   <th>Title</th>
                   <th>Description</th>
                   <th>Status</th>
-                  {/* <th>Purchased By</th>
-            <th>Remarks</th> */}
                 </tr>
               </thead>
 
@@ -155,8 +209,6 @@ const PoliciesView = () => {
                       <td>{policies.title}</td>
                       <td>{policies.description}</td>
                       <td>{policies.status}</td>
-                      {/* <td>{expense.purchaseBy}</tdies
-                <td>{expense.remarks}</td> */}
                       <td className="mx-2">
                         <Link
                           to={`/policies-profile/${policies.policiesId}`}
@@ -192,24 +244,30 @@ const PoliciesView = () => {
                 </h3>
                 <DialogContent>
                   <form onSubmit={handleSubmit}>
-                    <div style={{ display: "flex" }}>
-                      <select
-                        value={setSelectedCompany}
-                        onChange={(e) => onSelectCompany(e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Select company Name
-                        </option>
-                        {company.map((company) => (
-                          <option
-                            key={company.companyId}
-                            value={company.companyName}
-                          >
-                            {company.companyName}
-                          </option>
-                        ))}
-                        <option value="addCompany">+Add Company</option>
-                      </select>
+                    <div className="data-input-fields">
+                      <TextField
+                          id="companyName"
+                          margin="dense"
+                          select
+                          label="CompanyName"
+                          fullWidth
+                          defaultValue="Choose"
+                          SelectProps={{
+                            native: true,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          value={formData.companyName}
+                          onChange={(e) => handleInputChange(e)}
+                          name="companyName"
+                        >
+                          {company.map((option, index) => (
+                            <MenuItem key={index} value={option.companyName}>
+                              {option.companyName}
+                            </MenuItem>
+                          ))}
+                        </TextField>
 
                       <TextField
                         margin="dense"
@@ -219,32 +277,60 @@ const PoliciesView = () => {
                         name="title"
                         id="title"
                         value={formData.title}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e)}
                         required
-                        style={{ margin: "0px 3px" }}
+                        error={titleError}
+                        helperText={titleError && "Title must be between 5 and 30 characters"}
                       />
+                    </div>
+
+                    <div className="data-input-fields">
+                    <TextField
+  margin="dense"
+  label="Description"
+  type="text"
+  fullWidth
+  name="description"
+  id="description"
+  value={formData.description}
+  onChange={(e) => handleInputChange(e)}
+  required
+  error={descriptionError}
+  helperText={descriptionError && 'Please enter a description between 2 and 200 characters.'}
+/>
+
+                      <TextField
+                        margin="dense"
+                        label="Create Date"
+                        type="date"
+                        fullWidth
+                        name="createdDate"
+                        id="createdDate"
+                        value={formData.createdDate}
+                        onChange={(e) => handleInputChange(e)}
+                        required
+                        error={dateError}
+                        helperText={dateError && "Please select the current date"}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+
                     </div>
 
                     <TextField
                       margin="dense"
-                      label="Description"
-                      type="text"
-                      fullWidth
-                      name="description"
-                      id="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      required
-                    />
-                    <TextField
-                      margin="dense"
+                      label="Policy Form"
                       type="file"
                       fullWidth
                       name="chooseFile"
                       id="chooseFile"
-                      value={formData.chooseFile}
-                      onChange={handleInputChange}
+                      onChange={(e) => handleInputChange(e)}
+                      accept=".pdf"
                       required
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
                     />
 
                     <DialogActions>

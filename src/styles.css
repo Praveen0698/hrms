@@ -32,7 +32,20 @@ html {
 .data-buttons {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+   margin-top: 20px;  
+
+}
+
+.dialog {
+  width: 100%;
+}
+
+#input-btn {
+  background: linear-gradient(to right, #1cb5e0, #000046);
+  width: 100%;
+  color: white; 
+  padding: 5px 15px; 
+
 }
 
 .dashboard-container {

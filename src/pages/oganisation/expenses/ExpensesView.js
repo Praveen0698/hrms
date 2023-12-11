@@ -16,7 +16,8 @@ const ExpensesView = () => {
   const [expenses, setExpenses] = useState([]);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     expenceType: "",
     purchaseDate: "",
@@ -42,11 +43,16 @@ const ExpensesView = () => {
 
   const saveExpenses = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:8083/expence/create/expence", formData);
-    navigate("/expenses");
-    alert("Added Successfully");
-    loadExpenses();
-    handleClose();
+    console.log(formData);
+    try {
+      await axios.post("http://localhost:8081/expence/create/expence", formData);
+      alert("Added Successfully");
+      handleClose();
+      loadExpenses();
+      navigate("/organisation/expenses");
+    } catch (error) {
+      console.error("Error saving expenses:", error);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -62,15 +68,10 @@ const ExpensesView = () => {
 
   const loadExpenses = async () => {
     try {
-      const result = await axios.get(
-        "http://localhost:8083/expence/get/expence",
-        {
-          validateStatus: () => {
-            return true;
-          },
-        }
+      const response = await axios.get(
+        "http://localhost:8081/expence/get/expence"
       );
-      setExpenses(result.data);
+      setExpenses(response.data);
     } catch (error) {
       console.error("Error loading expenses:", error);
     }
@@ -78,8 +79,7 @@ const ExpensesView = () => {
 
   const handleDelete = async (id) => {
     try {
-      console.log(id);
-      await axios.delete(`http://localhost:8083/expence/delete/${id}`);
+      await axios.delete(`http://localhost:8081/expence/delete/${id}`);
       loadExpenses();
     } catch (error) {
       console.error("Error deleting expense:", error);
@@ -97,13 +97,13 @@ const ExpensesView = () => {
               className="above-table"
               style={{ display: "flex", justifyContent: "space-between" }}
             >
-              <div>
+              <div className="add">
                 <Button
                   variant="outlined"
                   onClick={handleOpen}
-                  style={{ height: "35px" }}
+                  style={{ height: "35px", marginBottom: "10px" }}
                 >
-                  <MdAdd style={{ fontSize: "14px", marginRight: "3px" }} />
+                  <MdAdd />
                   ADD EXPENSES
                 </Button>
               </div>
@@ -172,9 +172,16 @@ const ExpensesView = () => {
                 <h3 style={{ textAlign: "center", marginTop: "30px" }}>
                   EXPENSE FORM
                 </h3>
-                <DialogContent>
+                <DialogContent
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <form onSubmit={handleSubmit}>
-                    <div style={{ display: "flex" }}>
+                    <div className="data-input-fields">
                       <TextField
                         margin="dense"
                         label="Expense Type"
@@ -185,19 +192,18 @@ const ExpensesView = () => {
                         value={formData.expenceType}
                         onChange={handleInputChange}
                         required
-                        style={{ margin: "0px 3px" }}
                       />
                       <TextField
                         margin="dense"
                         label="Purchase Date"
-                        type="text"
+                        type="date"
                         fullWidth
                         name="purchaseDate"
                         id="purchaseDate"
                         value={formData.purchaseDate}
                         onChange={handleInputChange}
                         required
-                        style={{ margin: "0px 3px" }}
+                        InputLabelProps={{ shrink: true }}
                       />
                     </div>
 
@@ -222,7 +228,7 @@ const ExpensesView = () => {
                       value={formData.purchaseBy}
                       onChange={handleInputChange}
                       required
-                      style={{ margin: "0px 3px" }}
+                      style={{ margin: "10px 3px" }}
                     />
                     <TextField
                       margin="dense"

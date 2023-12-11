@@ -14,15 +14,15 @@ import { BiSolidHide } from "react-icons/bi";
 import { Card, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 const LocationView = () => {
+  const [email, setEmail] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [phone, setPhoneNumber] = useState();
+  const [phoneError, setPhoneError] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [company, setCompany] = useState([]);
-  // const [selectedCompany, setSelectedCompany] = useState(""); // Fixed the capitalization here
   let navigate = useNavigate();
-  // const onSelectCompany = (selectedCompany) => {
-  //   setSelectedCompany(selectedCompany);
-  //   navigate("/location");
-  // };
+
 
   const handleButtonClick = () => {
     setFormVisible((prev) => !prev);
@@ -30,7 +30,6 @@ const LocationView = () => {
 
   const [location, setLocation] = useState([]);
   const [search, setSearch] = useState("");
-  // const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     locationName: " ",
@@ -42,33 +41,44 @@ const LocationView = () => {
     companyName: " ",
   });
 
-  //   let {
-  //     locationName,
-  //     email,
-  //     phone,
-  //     faxNumber,
-  //     locationHead,
-  //     locationHrManager,
-  //     address,
-  //  companyName
-  //   } = location;
+
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    const isValidLength = value.length >= 2 && value.length <= 40;
+    setAddressError(!isValidLength);
+
+    if (name === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setIsEmailValid(emailRegex.test(value));
+    }
+    if (name === 'phone') {
+      // Validate phone number format
+      const isValidPhoneNumber = /^\d{10}(-\d{1,4})?$/.test(value);
+      setPhoneError(!isValidPhoneNumber);
+    }
+
+    const isValidFax = /^\d{10}$/.test(value);
+    setFaxError(!isValidFax);
     setFormData({
       ...formData,
+      [name]: value,
       [e.target.name]: e.target.value,
-      // companyName:selectedCompany
+
     });
   };
 
+ 
+
   const saveLocation = async (e) => {
-    e.preventDefault();
+
     await axios.post(
       "http://localhost:8081/location/create/location",
       formData
     );
     alert("Location saved successfully");
-    navigate("/location");
+    navigate("/organisation/location");
     loadLocation();
     setFormData({
       locationName: "",
@@ -80,6 +90,29 @@ const LocationView = () => {
       companyName: "",
     });
   };
+  
+  // const handlePhoneChange = (e) => {
+  //   const value = e.target.value;
+  //   setPhoneNumber(value);
+
+  //   const isValid = /^\d{10}(-\d{1,4})?$/.test(value);
+  //   setPhoneError(!isValid);
+  // };
+
+  const [faxError, setFaxError] = useState(false);
+
+  
+
+  // const handleEmailChange = (e) => {
+  //   const inputEmail = e.target.value;
+  //   setEmail(inputEmail);
+
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   setIsEmailValid(emailRegex.test(inputEmail));
+  // };
+  const [addressError, setAddressError] = useState(false);
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -127,6 +160,10 @@ const LocationView = () => {
     loadLocation();
   };
 
+  const enforceMaxLength = (value, maxLength) => {
+    return value.length <= maxLength ? value : value.slice(0, maxLength)
+  }
+
   return (
     <div>
       <Header />
@@ -145,18 +182,16 @@ const LocationView = () => {
                     setToggle(!toggle);
                     handleButtonClick();
                   }}
-                  style={{ height: "35px" }}
+                  style={{ height: "35px", marginBottom: "10px " }}
                 >
                   {toggle ? (
-                    <div>
-                      <BiSolidHide
-                        style={{ fontSize: "14px", marginRight: "3px" }}
-                      />
+                    <div className="hide">
+                      <BiSolidHide />
                       HIDE
                     </div>
                   ) : (
-                    <div>
-                      <MdAdd style={{ fontSize: "14px", marginRight: "3px" }} />
+                    <div className="add">
+                      <MdAdd />
                       ADD LOCATION
                     </div>
                   )}
@@ -181,33 +216,34 @@ const LocationView = () => {
                   </h3>
                   <DialogContent>
                     <form onSubmit={handleSubmit}>
-                      <div style={{ display: "flex" }}>
-                        <FormControl fullWidth>
-                          <InputLabel id="demo-company-select-label">
-                            Company Name
-                          </InputLabel>
-                          <Select
-                            labelId="demo-company-select-label"
-                            id="selectedCompany"
-                            value={formData.companyName}
-                            name="companyName"
-                            label="Company Name"
-                            onChange={(e) => handleInputChange(e)}
-                            required
-                          >
-                            {company.map((item, index) => {
-                              return (
-                                <MenuItem key={index} value={item.companyName}>
-                                  {item.companyName}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </FormControl>
+                      <div className="data-input-fields">
+                      <TextField
+                          id="companyName"
+                          margin="dense"
+                          select
+                          label="Company Name"
+                          fullWidth
+                          defaultValue="Choose"
+                          SelectProps={{
+                            native: true,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          value={formData.companyName}
+                          onChange={(e) => handleInputChange(e)}
+                          name="companyName"
+                        >
+                          {company.map((option, index) => (
+                            <option key={index} value={option.companyName}>
+                                {option.companyName}
+                              </option>
+                          ))}
+                        </TextField>
 
                         <TextField
                           margin="dense"
-                          label="locationHead"
+                          label="Location Head"
                           type="text"
                           fullWidth
                           name="locationHead"
@@ -215,13 +251,12 @@ const LocationView = () => {
                           value={formData.locationHead}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "0 3px" }}
                         />
                       </div>
-                      <div style={{ display: "flex" }}>
+                      <div className="data-input-fields">
                         <TextField
                           margin="dense"
-                          label="location"
+                          label="Location"
                           type="text"
                           fullWidth
                           name="locationName"
@@ -229,40 +264,31 @@ const LocationView = () => {
                           value={formData.locationName}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
                         />
 
                         <TextField
                           margin="dense"
-                          label="address1"
+                          label="Address"
                           type="text"
                           fullWidth
                           name="address"
                           id="address"
                           value={formData.address}
-                          onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
+                          error={addressError}
+                          helperText={addressError && "Address must be between 2 and 40 characters"}
+                          inputProps={{ minLength: 2, maxLength: 40 }}
+                          onInput={(e) => {
+                            e.target.value = enforceMaxLength(e.target.value, 40);
+                            handleInputChange(e);
+                          }}
                         />
                       </div>
-                      {/* <TextField
-                  margin="dense"
-                  label="address2"
-                  type="text"
-                  fullWidth
-                  name="address2"
-                  id="address2"
-                  value={address2}
-                  onChange={(e) => handleInputChange(e)}
-                  required
-                  style={{ margin: "0 3px" }}
-                />
-              </div> */}
 
-                      <div style={{ display: "flex" }}>
+                      <div className="data-input-fields">
                         <TextField
                           margin="dense"
-                          label="email"
+                          label="Email"
                           type="email"
                           fullWidth
                           name="email"
@@ -270,11 +296,13 @@ const LocationView = () => {
                           value={formData.email}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
+                          error={!isEmailValid}
+                          helperText={!isEmailValid && "Please enter a valid email address."}
                         />
-                        <TextField
+
+<TextField
                           margin="dense"
-                          label="phone"
+                          label="Phone"
                           type="number"
                           fullWidth
                           name="phone"
@@ -282,51 +310,57 @@ const LocationView = () => {
                           value={formData.phone}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
+                          error={phoneError}
+                          helperText={phoneError ? "Invalid phone number" : ""}
                         />
+                        
                         <TextField
                           margin="dense"
-                          label="faxnumber"
-                          type="number"
+                          label="Fax Number"
+                          type="number"  // Change the type to "text" to allow non-numeric characters
                           fullWidth
                           name="faxNumber"
                           id="faxNumber"
                           value={formData.faxNumber}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "8px 3px" }}
+                          error={faxError}
+                          helperText={faxError ? "Invalid fax number (must be 10 digits)" : ""}
                         />
                       </div>
 
-                      <Button
-                        type="submit"
-                        onClick={saveLocation}
-                        style={{
-                          background:
-                            "linear-gradient(to right, #1cb5e0, #000046)",
-                          height: "35px",
-                          width: "48%",
-                          color: "white",
-                          margin: "0 7px",
-                        }}
-                        variant="outlined"
-                      >
-                        Submit
-                      </Button>
-                      <Button
-                        onClick={"/location"}
-                        style={{
-                          background:
-                            "linear-gradient(to left, #1cb5e0, #000046)",
-                          height: "35px",
-                          width: "48%",
-                          color: "white",
-                          margin: "0 7px",
-                        }}
-                        variant="outlined"
-                      >
-                        Cancel
-                      </Button>
+                      <div className="data-buttons">
+                        <Button
+                          type="submit"
+                          onClick={saveLocation}
+                          style={{
+                            background:
+                              "linear-gradient(to right, #1cb5e0, #000046)",
+                            height: "35px",
+                            width: "48%",
+                            color: "white",
+                            margin: "0 7px",
+                          }}
+                          variant="outlined"
+                        >
+                          Submit
+                        </Button>
+                        <Button
+                          onClick={"/location"}
+                          style={{
+                            background:
+                              "linear-gradient(to left, #1cb5e0, #000046)",
+                            height: "35px",
+                            width: "48%",
+                            color: "white",
+                            margin: "0 7px",
+                          }}
+                          variant="outlined"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+
                     </form>
                   </DialogContent>
                   {/* </Dialog> */}

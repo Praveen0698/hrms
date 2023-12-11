@@ -1,0 +1,40 @@
+[9:50 am, 08/12/2023] Aditi Intern Orive Solutions: <TextField
+                            margin="dense"
+                              label="Employee name"
+                              type="text"
+                              fullWidth
+                              name="employeeName"
+                              id="employeeName"
+                            
+                            value={formData.employeeName}
+ onChange={(e) => handleInputChange(e)}
+ required
+ error={errorMsg !== ''}
+ helperText={errorMsg}
+ InputProps={{
+    minLength: 2,
+    maxLength: 50,
+ }}
+ onInput={(e) => {
+    e.target.value = enforceMaxLength(e.target.value, 50);
+    handleNameChange(e);
+ }}/>
+ const handleNameChange = (e) => {
+    const value = e.target.value;
+    if (value.length < 2 || value.length > 50) {
+      setErrorMsg('Invalid name length. Name length should be between 2 and 50.');
+   } else {
+      setErrorMsg('');
+   }
+    setEmployeeName(e.target.value);
+  };
+
+  const handleNameChange = (e) =>{
+    const value = e.target.value;
+    if (value.length < 2 || value.length > 50) {
+      setErrorName('Invalid name length. Name length should be between 2 and 50.');
+   } else {
+      setErrorName('');
+   }
+    handleNameChange(e.target.value);
+  }

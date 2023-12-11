@@ -23,6 +23,14 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 const AnnouncementsView = () => {
+
+  const getCurrentDate = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = `${now.getMonth() + 1}`.padStart(2, '0');
+    const day = `${now.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   const [formVisible, setFormVisible] = useState(false);
   const [toggle, setToggle] = useState(false);
 
@@ -65,6 +73,7 @@ const AnnouncementsView = () => {
     departmentName: " ",
     summary: " ",
     description: " ",
+    createdDate: getCurrentDate(),
   });
 
   const {
@@ -76,6 +85,7 @@ const AnnouncementsView = () => {
     locationName,
     summary,
     description,
+    
   } = formData;
 
   const handleOpen = () => {
@@ -86,12 +96,40 @@ const AnnouncementsView = () => {
     setOpen(false);
   };
 
+  const [summaryError, setSummaryError] = useState(false);
+
+  const [titleError, setTitleError] = useState(false);
+  const [dateError, setDateError] = useState(false);
+
   const handleInputChange = (e) => {
+
+    
+
+    const { name, value } = e.target;
+
+    const isValidLengthSum = value.length >= 2 && value.length <= 200;
+    const hasNoNumbersSum = !/\d/.test(value); // Check for the presence of numbers
+    setSummaryError(!isValidLengthSum || !hasNoNumbersSum);
+
+    
+    const isValidLength = value.length >= 2 && value.length <= 50;
+    const hasNoNumbers = !/\d/.test(value); // Check for the presence of numbers
+    setTitleError(!isValidLength || !hasNoNumbers);
+
+    const isValidDate = value === getCurrentDate();
+    setDateError(!isValidDate);
+
+    
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+      [name]: value,
+
     });
   };
+
+  
 
   const saveAnnouncements = async (e) => {
     e.preventDefault();
@@ -99,10 +137,57 @@ const AnnouncementsView = () => {
       "http://localhost:8081/announcement/create/announcement",
       formData
     );
-    navigate("/announcements");
+    navigate("/organisation/announcements");
     alert("Added Successfully");
     loadAnnouncements();
+    setFormData({
+      title: " ",
+      startDate: " ",
+      endDate: " ",
+      companyName: " ",
+      locationName: " ",
+      departmentName: " ",
+      summary: " ",
+      description: " ",
+      createdDate: getCurrentDate(),
+
+    })
   };
+  const Type = [
+    {
+      value: "Choose",
+      label: "Select Depatment Name",
+    },
+    {
+      value: "Human Resources Department",
+      label: "Human Resources Department",
+    },
+    {
+      value: "Marketing Department",
+      label: "Marketing Department",
+    },
+    {
+      value: "Finance Department",
+      label: "Finance Department",
+    },
+    {
+      value: "Information Technology Department",
+      label: "Information Technology Department",
+    },
+    {
+      value: "Customer Service Department",
+      label: "Customer Service Department",
+    },
+    {
+      value: "Research and Development Department",
+      label: "Research and Development Department",
+    },
+    {
+      value: "Legal Department",
+      label: "Legal Department",
+    },
+  ];
+ 
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -110,11 +195,12 @@ const AnnouncementsView = () => {
     console.log("Form submitted:", formData);
     handleClose();
   };
-
+console.log(formData)
   useEffect(() => {
     loadAnnouncements();
     fetchCompany();
     fetchLocation();
+    fetchDepartment()
   }, []);
 
   const loadAnnouncements = async () => {
@@ -163,11 +249,22 @@ const AnnouncementsView = () => {
     }
   };
 
+  console.log("dept",department)
+  console.log("loc",location)
+  console.log("comp",company)
+console.log(announcements )
   const handleDelete = async (id) => {
     console.log(id);
     await axios.delete(`http://localhost:8081/announcement/delete/${id}`);
     loadAnnouncements();
   };
+ 
+
+  // useEffect(() => {
+  //   // Set the initial value to the current date
+  //   const currentDate = new Date().toISOString().split('T')[0];
+  //   setCreatedDate(currentDate);
+  // }, []); // The empty dependency array ensures this runs only once on mount
 
   return (
     <div>
@@ -188,18 +285,16 @@ const AnnouncementsView = () => {
                     setToggle(!toggle);
                     handleButtonClick();
                   }}
-                  style={{ height: "35px" }}
+                  style={{ height: "35px", marginBottom: "10px" }}
                 >
                   {toggle ? (
-                    <div>
-                      <BiSolidHide
-                        style={{ fontSize: "14px", marginRight: "3px" }}
-                      />
+                    <div className="hide">
+                      <BiSolidHide />
                       HIDE
                     </div>
                   ) : (
-                    <div>
-                      <MdAdd style={{ fontSize: "14px", marginRight: "3px" }} />
+                    <div className="add">
+                      <MdAdd />
                       ADD ANNOUNCEMENTS
                     </div>
                   )}
@@ -212,7 +307,7 @@ const AnnouncementsView = () => {
                 variant="outlined"
                 style={{ boxShadow: " 1px 1px 10px black" }}
               >
-                <div style={{ marginTop: "20px" }}>
+                <div>
                   <h3
                     style={{
                       textAlign: "center",
@@ -224,19 +319,20 @@ const AnnouncementsView = () => {
                   </h3>
                   <DialogContent>
                     <form onSubmit={handleSubmit}>
-                      <div style={{ display: "flex" }}>
-                        <TextField
-                          margin="dense"
-                          label="Title"
-                          type="text"
-                          fullWidth
-                          name="title"
-                          id="title"
-                          value={title}
-                          onChange={(e) => handleInputChange(e)}
-                          required
-                          style={{ margin: "0 3px" }}
-                        />
+                      <div className="data-input-fields">
+                      <TextField
+      margin="dense"
+      label="Title"
+      type="text"
+      fullWidth
+      name="title"
+      id="title"
+      value={formData.title}
+      onChange={(e) => handleInputChange(e)}
+      required
+      error={titleError}
+      helperText={titleError && "Title must be between 2 and 50 characters"}
+    />
                         <TextField
                           margin="dense"
                           label="Start-Date"
@@ -244,10 +340,9 @@ const AnnouncementsView = () => {
                           fullWidth
                           name="startDate"
                           id="startDate"
-                          value={startDate}
+                          value={formData.startDate}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "0 3px" }}
                         />
                         <TextField
                           margin="dense"
@@ -256,130 +351,130 @@ const AnnouncementsView = () => {
                           fullWidth
                           name="endDate"
                           id="endDate"
-                          value={endDate}
+                          value={formData.endDate}
                           onChange={(e) => handleInputChange(e)}
                           required
-                          style={{ margin: "0 3px" }}
                         />
+                         <TextField
+      margin="dense"
+      label="Created Date"
+      type="date"
+      fullWidth
+      name="createdDate"
+      id="createdDate"
+      value={formData.createdDate}
+      onChange={(e) => handleInputChange(e)}
+      required
+      error={dateError}
+      helperText={dateError ? 'Please select the current date' : ''}
+    />
                       </div>
-                      <div style={{ display: "flex" }}>
-                        <FormControl fullWidth>
-                          <InputLabel id="demo-simple-select-label">
-                            Department Name
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={departmentName}
-                            label="Department Name"
-                            onChange={(e) => handleInputChange(e)}
-                            required
-                          >
-                            <MenuItem value={10}>
-                              Human Resources Department
-                            </MenuItem>
-                            <MenuItem value={20}>Marketing Department</MenuItem>
-                            <MenuItem value={30}>Finance Department</MenuItem>
-                            <MenuItem value={40}>
-                              Information Technology Department
-                            </MenuItem>
-                            <MenuItem value={50}>
-                              Customer Service Department
-                            </MenuItem>
-                            <MenuItem value={60}>
-                              Research and Development Department
-                            </MenuItem>
-                            <MenuItem value={70}>Legal Department</MenuItem>
-                            <MenuItem value={80}>
-                              Supply Chain Management Department
-                            </MenuItem>
-                          </Select>
-                          <select
-                            value={selectedDepartment}
-                            onChange={(e) => onSelectDepartment(e.target.value)}
-                          >
-                            <option value="" disabled>
-                              Select Department
-                            </option>
-                            {department.map((department) => (
-                              <option
-                                key={department.departmentId}
-                                value={department.departmentName}
-                              >
-                                {department.departmentName}
-                              </option>
+                      <div className="data-input-fields">
+                      <TextField
+                          id="departmentName"
+                          margin="dense"
+                          select
+                          label="Department Name"
+                          fullWidth
+                          defaultValue="Choose"
+                          SelectProps={{
+                            native: true,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          value={formData.departmentName}
+                          onChange={(e) => handleInputChange(e)}
+                          name="departmentName"
+                        >
+                         {Type.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
                             ))}
-                            <option value="addDepartment">
-                              +Add Department
-                            </option>
-                          </select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                          <InputLabel id="demo-simple-select-label">
-                            Location Name
-                          </InputLabel>
-                          <select
-                            value={setSelectedLocation}
-                            onChange={(e) => onSelectLocation(e.target.value)}
-                          >
-                            <option value="" disabled>
-                              Select Location Name
-                            </option>
-                            {location.map((location) => (
-                              <option
-                                key={location.locationId}
-                                value={location.locationName}
-                              >
-                                {location.locationName}
-                              </option>
-                            ))}
-                            <option value="addLocation">+Add Location</option>
-                          </select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                          <select
-                            value={setSelectedCompany}
-                            onChange={(e) => onSelectCompany(e.target.value)}
-                          >
-                            <option value="" disabled>
-                              Select company Name
-                            </option>
-                            {company.map((company) => (
-                              <option
-                                key={company.companyId}
-                                value={company.companyName}
-                              >
-                                {company.companyName}
-                              </option>
-                            ))}
-                            <option value="addCompany">+Add Company</option>
-                          </select>
-                        </FormControl>
+                        </TextField>
+
+                        <TextField
+                          id="locationName"
+                          margin="dense"
+                          select
+                          label="Location Name"
+                          fullWidth
+                          defaultValue="Choose"
+                          SelectProps={{
+                            native: true,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          value={formData.departmentName}
+                          onChange={(e) => handleInputChange(e)}
+                          name="dlocationName"
+                        >
+                          {location.map((item, index) => {
+                              return(<MenuItem key={index} value={item.locationName}>
+                                {item.locationName}
+                              </MenuItem>)
+                              
+                            })}
+                        </TextField>
+
+                        <TextField
+                          id="companyName"
+                          margin="dense"
+                          select
+                          label="Company Name"
+                          fullWidth
+                          defaultValue="Choose"
+                          SelectProps={{
+                            native: true,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          value={formData.companyName}
+                          onChange={(e) => handleInputChange(e)}
+                          name="companyName"
+                        >
+                          {company.map((option, index) => (
+                            <MenuItem key={index} value={option.companyName}>
+                              {option.companyName}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+
                       </div>
 
+                      <div className="data-input-fields">
                       <TextField
-                        margin="dense"
-                        label="Summary"
-                        type="text"
-                        fullWidth
-                        name="summary"
-                        id="summary"
-                        value={summary}
-                        onChange={(e) => handleInputChange(e)}
-                        required
-                      />
-                      <TextField
-                        margin="dense"
-                        label="Description"
-                        type="text"
-                        fullWidth
-                        name="description"
-                        id="description"
-                        value={description}
-                        onChange={(e) => handleInputChange(e)}
-                        required
-                        style={{ margin: "8px 3px" }}
-                      />
+      margin="dense"
+      label="Summary"
+      type="text"
+      fullWidth
+      name="summary"
+      id="summary"
+      value={formData.summary}
+      onChange={(e) => handleInputChange(e)}
+      required
+      error={summaryError}
+      helperText={
+        summaryError
+          ? "Summary must be between 2 and 200 characters and should not contain numbers"
+          : ""
+      }
+    />
+                        <TextField
+                          margin="dense"
+                          label="Description"
+                          type="text"
+                          fullWidth
+                          name="description"
+                          id="description"
+                          value={formData.description}
+                          onChange={(e) => handleInputChange(e)}
+                          required
+                        />
+                      </div>
 
                       <DialogActions>
                         <Button
@@ -427,6 +522,7 @@ const AnnouncementsView = () => {
                   <th>Title</th>
                   <th>Start-Date</th>
                   <th>End-Date</th>
+                  <th>Created-Date</th>
                   <th>Department Name</th>
                   <th>Location Name</th>
                   <th>Company Name</th>
@@ -437,19 +533,8 @@ const AnnouncementsView = () => {
               </thead>
 
               <tbody className="text-center">
-                {/* <tr>
-            <td>1</td>
-            <td>1www</td>
-            <td>1www</td>
-            <td>1www</td>
-            <td>1www</td>
-            <td>1www</td>
-            <td>1www</td>
-            <td>1www</td>
-            <td>1www</td>
-            <td>1www</td>
-          </tr> */}
-                {location
+                
+                {announcements
                   .filter(
                     (announcements) =>
                       announcements.title &&
@@ -463,6 +548,7 @@ const AnnouncementsView = () => {
                       <td>{announcements.title}</td>
                       <td>{announcements.startDate}</td>
                       <td>{announcements.endDate}</td>
+                      <td>{announcements.createdDate}</td>
                       <td>{announcements.departmentName}</td>
                       <td>{announcements.locationName}</td>
                       <td>{announcements.companyName}</td>

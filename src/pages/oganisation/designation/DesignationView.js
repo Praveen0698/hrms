@@ -12,8 +12,21 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { MdAdd } from "react-icons/md";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 const DesignationView = () => {
+  const getCurrentDate = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = `${now.getMonth() + 1}`.padStart(2, '0');
+    const day = `${now.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const [dateError, setDateError] = useState("");
   const [designation, setDesignation] = useState([]);
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState([]);
@@ -30,8 +43,8 @@ const DesignationView = () => {
 
   const [formData, setFormData] = useState({
     departmentName: "",
-    designationName: "",
-    createdDate: "",
+    designationType: "",
+    createdDate: getCurrentDate(),
   });
 
   const { departmentName, designationName } = formData;
@@ -45,9 +58,18 @@ const DesignationView = () => {
   };
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === 'createdDate') {
+      const isValidDate = value === getCurrentDate();
+      setDateError(!isValidDate);
+    }
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+      [name]: value,
+      
+
     });
   };
 
@@ -58,7 +80,7 @@ const DesignationView = () => {
       departmentId: selectedDepartment, // Assuming the field name is 'departmentId'
     });
     alert("Designation is added successfully");
-    navigate("/designation");
+    navigate("/organisation/designation");
     loadDesignation();
     handleClose();
   };
@@ -98,6 +120,8 @@ const DesignationView = () => {
     }
   };
 
+  console.log(department)
+
   const handleDelete = async (id) => {
     await axios.delete(`http://localhost:8081/designation/delete/${id}`);
     loadDesignation();
@@ -121,10 +145,10 @@ const DesignationView = () => {
                     // handleButtonClick();
                     handleOpen();
                   }}
-                  style={{ height: "35px" }}
+                  style={{ height: "35px", marginBottom: "10px" }}
                 >
-                  <div>
-                    <MdAdd style={{ fontSize: "14px", marginRight: "3px" }} />
+                  <div className="add">
+                    <MdAdd />
                     ADD DESIGNATION
                   </div>
                 </Button>
@@ -135,8 +159,8 @@ const DesignationView = () => {
                 <tr className="text-center">
                   <th>ID</th>
                   <th>Department Name</th>
-                  <th>Designation Name</th>
-                  {/* <th>created Date</th> */}
+                  <th>Designation Type</th>
+                  <th>created Date</th> 
                   <th>Status</th>
                   <th colSpan="3">Actions</th>
                 </tr>
@@ -155,7 +179,7 @@ const DesignationView = () => {
                         {index + 1}
                       </th>
                       <td>{designation.departmentName}</td>
-                      <td>{designation.designationName}</td>
+                      <td>{designation.designationType}</td>
                       <td>{designation.createdDate}</td>
                       <td>{designation.status}</td>
                       {/* <td className="mx-2">
@@ -196,84 +220,94 @@ const DesignationView = () => {
                 </DialogTitle>
                 <DialogContent>
                   <form onSubmit={handleSubmit}>
-                    <select
-                      value={selectedDepartment}
-                      onChange={(e) => onSelectDepartment(e.target.value)}
-                    >
-                      <option value="" disabled>
-                        Select Department
-                      </option>
-                      {department.map((department) => (
-                        <option
-                          key={department.departmentId}
-                          value={department.departmentName}
+                  <div className="data-input-fields">
+                  <TextField
+                          id="departmentHead"
+                          margin="dense"
+                          select
+                          label="Department Head"
+                          fullWidth
+                          defaultValue="Choose"
+                          SelectProps={{
+                            native: true,
+                          }}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          value={formData.departmentHead}
+                          onChange={(e) => handleInputChange(e)}
+                          name="companyType"
                         >
-                          {department.departmentName}
-                        </option>
-                      ))}
-                      <option value="addDepartment">+Add Department</option>
-                    </select>
+                        {department.map((option,index) => (
+                              <MenuItem key={index} value={option.departmentName}>
+                                {option.departmentName}
+                              </MenuItem>
+                            ))}
+                          
+                        </TextField>
+                        
 
-                    {/* <TextField
-                margin="dense"
-                label="Department Name"
-                type="text"
-                fullWidth
-                name="departmentName"
-                value={departmentName}
-                onChange={(e) => handleInputChange(e)}
-                required
-              /> */}
 
                     <TextField
                       margin="dense"
-                      label="Designation Name"
+                      label="Designation "
                       type="text"
                       fullWidth
-                      name="designationName"
-                      value={designationName}
+                      name="designationType"
+                      value={formData.designationType}
                       onChange={(e) => handleInputChange(e)}
                       required
                     />
-                    {/* <TextField
-                margin="dense"
-                //label="Date"
-                type="date"
-                fullWidth
-                name="createdDate"
-                value={createdDate}
-                onChange={(e) => handleInputChange(e)}
-                required
-              /> */}
+                    <TextField
+                        margin="dense"
+                        label="Create Date"
+                        type="date"
+                        fullWidth
+                        name="createdDate"
+                        id="createdDate"
+                        value={formData.createdDate}
+                        onChange={(e) => handleInputChange(e)}
+                        required
+                        error={dateError}
+                        helperText={dateError && "Please select the current date"}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+
+                  </div>
+                 
 
                     <DialogActions>
-                      <Button
-                        type="submit"
-                        onClick={saveDesignation}
-                        style={{
-                          background:
-                            "linear-gradient(to right, #1cb5e0, #000046)",
-                          height: "35px",
-                          width: "100%",
-                          color: "white",
-                        }}
-                        variant="outlined"
-                      >
-                        Submit
-                      </Button>
-                      <Button
-                        onClick={handleClose}
-                        style={{
-                          background:
-                            "linear-gradient(to left, #1cb5e0, #000046)",
-                          height: "35px",
-                          width: "100%",
-                          color: "white",
-                        }}
-                        variant="outlined"
-                      >
-                        Cancel
-                      </Button>
+                      <div className="data-buttons">
+                        <Button
+                          type="submit"
+                          onClick={saveDesignation}
+                          style={{
+                            background:
+                              "linear-gradient(to right, #1cb5e0, #000046)",
+                            height: "35px",
+                            width: "100%",
+                            color: "white",
+                          }}
+                          variant="outlined"
+                        >
+                          Submit
+                        </Button>
+                        <Button
+                          onClick={handleClose}
+                          style={{
+                            background:
+                              "linear-gradient(to left, #1cb5e0, #000046)",
+                            height: "35px",
+                            width: "100%",
+                            color: "white",
+                          }}
+                          variant="outlined"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </DialogActions>
                   </form>
                 </DialogContent>

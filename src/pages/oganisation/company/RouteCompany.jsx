@@ -7,9 +7,9 @@ const RouteCompany = () => {
   return (
     <div>
       <Routes>
-        <Route path={"/organisation/editcompany"} element={<EditCompany />} />
+        <Route path={"/organisation/editcompany/:id"} element={<EditCompany />} />
         <Route
-          path={"/organisation/companyprofile"}
+          path={"/organisation/companypofile"}
           element={<CompanyPofile />}
         />
       </Routes>
