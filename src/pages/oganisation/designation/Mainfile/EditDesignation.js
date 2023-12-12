@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Header from "../../../../components/Header";
+import SideBar from "../../../../components/SideBar";
 
 const EditDesignation = () => {
   let navigate = useNavigate();
@@ -18,7 +20,7 @@ const EditDesignation = () => {
   }, []);
 
   const loadDesignation = async () => {
-    const result = await axios.get(`http://localhost:8083/designation/get/${id}`);
+    const result = await axios.get(`http://localhost:8081/designation/get/${id}`);
     setDesignation(result.data);
   };
 
@@ -31,12 +33,17 @@ const EditDesignation = () => {
 
   const updateDesignation = async (e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:8083/designation/update/${id}`, designation);
+    await axios.put(`http://localhost:8081/designation/update/${id}`, designation);
     navigate("/view-designation");
   };
 
   return (
-    <div className="col-sm-8 py-2 px-5 offset-2 shadow">
+    <div>
+    <Header />
+    <div className="dashboard-container">
+      <SideBar />
+      <div className="head-foot-part" style={{ padding: "0" }}>
+      <div className="col-sm-8 py-2 px-5 offset-2 shadow">
       <h2 className="mt-5">Edit Designation</h2>
       <form onSubmit={(e) => updateDesignation(e)}>
 
@@ -63,13 +70,17 @@ const EditDesignation = () => {
           </div>
 
           <div className="col-sm-2">
-            <Link to={"/designation"} className="btn btn-outline-warning btn-lg">
+            <Link to={"/organisation/designation"} className="btn btn-outline-warning btn-lg">
               Cancel
             </Link>
           </div>
         </div>
       </form>
     </div>
+      </div>
+    </div>
+  </div>
+    
   );
 };
 

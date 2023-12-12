@@ -139,6 +139,7 @@ const EditDepartment = () => {
               className="btn btn-outline-success btn-lg">
               Save
             </button>
+            
           </div>
 
           <div className="col-sm-2">

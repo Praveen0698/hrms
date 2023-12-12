@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Header from "../../../../components/Header";
+import SideBar from "../../../../components/SideBar";
 
 const EditExpenses = () => {
   let navigate = useNavigate();
@@ -28,7 +30,7 @@ const EditExpenses = () => {
   }, []);
 
   const loadExpenses = async () => {
-    const result = await axios.get(`http://localhost:8083/expence/get/${id}`);
+    const result = await axios.get(`http://localhost:8081/expence/get/${id}`);
     setExpenses(result.data);
   };
 
@@ -41,12 +43,17 @@ const EditExpenses = () => {
 
   const updateExpenses = async (e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:8083/expence/update/${id}`, expenses);
+    await axios.put(`http://localhost:8081/expence/update/${id}`, expenses);
     navigate("/expenses");
   };
 
   return (
-    <div className="col-sm-8 py-2 px-5 offset-2 shadow">
+    <div>
+    <Header />
+    <div className="dashboard-container">
+      <SideBar />
+      <div className="head-foot-part" style={{ padding: "0" }}>
+      <div className="col-sm-8 py-2 px-5 offset-2 shadow">
       <h2 className="mt-5"> Edit Expenses</h2>
       <form onSubmit={(e) => updateExpenses(e)}>
         <div className="input-group mb-5">
@@ -146,6 +153,10 @@ const EditExpenses = () => {
         </div>
       </form>
     </div>
+      </div>
+    </div>
+  </div>
+    
   );
 };
 
