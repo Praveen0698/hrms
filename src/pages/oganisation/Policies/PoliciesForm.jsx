@@ -70,7 +70,7 @@ const Policiesform = () => {
 
 useEffect(() => {
     fetchCompany()
-  })
+  },[])
 
   const savePolicies = async () => {
     try {
@@ -82,7 +82,6 @@ useEffect(() => {
       await api.savePolicies(formData);
 
       navigate("/organisation/policies");
-      alert("Added Successfully");
       handleClose();
     } catch (error) {
       console.error("Error saving policies:", error);
@@ -176,11 +175,10 @@ useEffect(() => {
         label="Policy Form"
         type="file"
         fullWidth
-        name="uploadPdf"
-        id="uploadPdf"
+        name="uploadDocument"
+        id="uploadDocument"
         onChange={(e) => handleInputChange(e)}
         accept=".pdf"
-        required
         InputLabelProps={{
           shrink: true,
         }}

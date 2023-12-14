@@ -31,11 +31,6 @@ const DesignationView = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  
-
-  
-
  
   useEffect(() => {
     loadDesignation();

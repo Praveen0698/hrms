@@ -1,64 +1,41 @@
 import React, { useEffect } from "react";
 
-import Header from "../../../../components/Header";
 import SideBar from "../../../../components/SideBar";
+import Header from "../../../../components/Header";
 
-import Button from "@mui/material/Button";
-
-import DialogContent from "@mui/material/DialogContent";
+import * as api from "../api"
+import StateLocation from "../StateLocation";
+import LocationTable from "../LocationTable";
+import LocationForm from "../LocationForm";
 
 import { MdAdd } from "react-icons/md";
-import Collapse from "@mui/material/Collapse";
 import { BiSolidHide } from "react-icons/bi";
+import Button from "@mui/material/Button";
+import DialogContent from "@mui/material/DialogContent";
+import Collapse from "@mui/material/Collapse";
+
 import { Card } from "@mui/material";
 
-import * as api from "../AnnouncementApi"
-import AnnouncementTable from "../AnnouncementTable";
+const LocationView = () => {
 
-import StateAnnouncement from "../StateAnnouncement";
-import AnnouncementForm from "../AnnouncementForm";
+ const {toggle,setToggle,formVisible,setFormVisible,location,setLocation,recDelete,setRecDelete} = StateLocation()
 
-const AnnouncementsView = () => {
-  const {
-    
-    recDelete,
-    setRecDelete,
-    
-    announcements,
-    setAnnouncements,
-    company,
-    
-    department,
-    
-    location,
-   
-    formVisible,
-    setFormVisible,
-    toggle,
-    setToggle,
-  } = StateAnnouncement();
-
-
-
+  const handleButtonClick = () => {
+    setFormVisible((prev) => !prev);
+  };
 
   useEffect(() => {
-    loadAnnouncements();
-  });
+    loadLocation();
+  }, []);
 
-  const loadAnnouncements = async () => {
-    const result = await api.loadAnnouncements()
-    setAnnouncements(result);
+  const loadLocation = async () => {
+    const result = await api.loadLocation()
+    setLocation(result);
   };
- 
 
-
-  console.log("dept", department);
-  console.log("loc", location);
-  console.log("comp", company);
-  console.log(announcements);
   const handleDelete = async () => {
-    await api.deleteAnnouncement(recDelete)
-    loadAnnouncements();
+    await api.deleteLocation(recDelete)
+    loadLocation();
   };
 
   useEffect(() => {
@@ -68,9 +45,10 @@ const AnnouncementsView = () => {
     }
   })
 
-  const handleButtonClick = () => {
-    setFormVisible((prev) => !prev);
-  };
+  // const [faxError, setFaxError] = useState(false);
+  // const [addressError, setAddressError] = useState(false);
+
+  
 
   return (
     <div>
@@ -83,7 +61,6 @@ const AnnouncementsView = () => {
               className="above-table"
               style={{ display: "flex", justifyContent: "space-between" }}
             >
-              {/* <Search search={search} setSearch={setSearch} /> */}
               <div>
                 <Button
                   variant="outlined"
@@ -91,7 +68,7 @@ const AnnouncementsView = () => {
                     setToggle(!toggle);
                     handleButtonClick();
                   }}
-                  style={{ height: "35px", marginBottom: "10px" }}
+                  style={{ height: "35px", marginBottom: "10px " }}
                 >
                   {toggle ? (
                     <div className="hide">
@@ -101,7 +78,7 @@ const AnnouncementsView = () => {
                   ) : (
                     <div className="add">
                       <MdAdd />
-                      ADD ANNOUNCEMENTS
+                      ADD LOCATION
                     </div>
                   )}
                 </Button>
@@ -113,7 +90,7 @@ const AnnouncementsView = () => {
                 variant="outlined"
                 style={{ boxShadow: " 1px 1px 10px black" }}
               >
-                <div>
+                <div style={{ marginTop: "20px" }}>
                   <h3
                     style={{
                       textAlign: "center",
@@ -121,16 +98,15 @@ const AnnouncementsView = () => {
                       fontWeight: "600",
                     }}
                   >
-                    ANNOUNCEMENTS
+                    LOCATION FORM
                   </h3>
                   <DialogContent>
-                    <AnnouncementForm />
+                    <LocationForm/>
                   </DialogContent>
                 </div>
               </Card>
             </Collapse>
-            <br />
-            <AnnouncementTable  announcements={announcements} setRecDelete={setRecDelete}/>
+           <LocationTable location={location} setRecDelete={setRecDelete} />
           </section>
         </div>
       </div>
@@ -138,4 +114,4 @@ const AnnouncementsView = () => {
   );
 };
 
-export default AnnouncementsView;
+export default LocationView;

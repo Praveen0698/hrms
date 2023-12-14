@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const PerformanceFile = () => {
     const [perDropdown, setPerDropdown] = useState("org-dropdown");
     const handlePerclick = () => {
@@ -18,9 +18,9 @@ const PerformanceFile = () => {
         </p>
         <div className={perDropdown}>
         
-            <p onClick={() => navigation("/performance/indicator")}>Indicator</p>
+            {/* <p onClick={() => navigation("/performance/Performance-Indicator")}>Indicator</p> */}
           
-            <p onClick={() => navigation("/performance/appraisal")}>Appraisal</p>
+            <p onClick={() => navigation("/performance/Performance-Appraisal")}>Appraisal</p>
          
         </div>
     </div>

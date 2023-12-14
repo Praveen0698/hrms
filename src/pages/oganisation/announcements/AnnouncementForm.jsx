@@ -202,8 +202,8 @@ const AnnouncementForm = () => {
           InputLabelProps={{
             shrink: true,
           }}
-          error={dateError}
-          helperText={dateError ? "Please select the current date" : ""}
+          // error={dateError}
+          // helperText={dateError ? "Please select the current date" : ""}
         />
       </div>
       <div className="data-input-fields">

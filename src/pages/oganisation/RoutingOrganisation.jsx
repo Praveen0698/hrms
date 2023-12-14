@@ -1,8 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "../../components/Dashboard";
-import CompanyView from "./company/CompanyView";
-import LocationView from "./location/LocationView";
+import CompanyView from "./company/Mainfile/CompanyView";
+import LocationView from "./location/Mainfile/LocationView";
 import DepartmentView from "./department/Mainfile/DepartmentView";
 import DesignationView from "./designation/Mainfile/DesignationView";
 import PoliciesView from "./Policies/Mainfile/PoliciesView";

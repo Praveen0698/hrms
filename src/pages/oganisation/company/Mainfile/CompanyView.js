@@ -1,76 +1,47 @@
 import React, { useEffect } from "react";
 
-import Header from "../../../../components/Header";
-import SideBar from "../../../../components/SideBar";
-
 import Button from "@mui/material/Button";
-
+import "../../../../../src/styles.css";
 import DialogContent from "@mui/material/DialogContent";
-
 import { MdAdd } from "react-icons/md";
 import Collapse from "@mui/material/Collapse";
 import { BiSolidHide } from "react-icons/bi";
 import { Card } from "@mui/material";
+import Header from "../../../../components/Header";
+import SideBar from "../../../../components/SideBar";
 
-import * as api from "../AnnouncementApi"
-import AnnouncementTable from "../AnnouncementTable";
+import * as api from "../api";
+import StateCompany from "../StateCompany";
+import CompanyTable from "../CompanyTable";
+import CompanyForm from "../CompanyForm";
 
-import StateAnnouncement from "../StateAnnouncement";
-import AnnouncementForm from "../AnnouncementForm";
+const CompanyView = () => {
 
-const AnnouncementsView = () => {
-  const {
-    
-    recDelete,
-    setRecDelete,
-    
-    announcements,
-    setAnnouncements,
-    company,
-    
-    department,
-    
-    location,
-   
-    formVisible,
-    setFormVisible,
-    toggle,
-    setToggle,
-  } = StateAnnouncement();
-
-
-
-
-  useEffect(() => {
-    loadAnnouncements();
-  });
-
-  const loadAnnouncements = async () => {
-    const result = await api.loadAnnouncements()
-    setAnnouncements(result);
-  };
- 
-
-
-  console.log("dept", department);
-  console.log("loc", location);
-  console.log("comp", company);
-  console.log(announcements);
-  const handleDelete = async () => {
-    await api.deleteAnnouncement(recDelete)
-    loadAnnouncements();
-  };
-
-  useEffect(() => {
-    if (recDelete !== "") {
-      handleDelete()
-      setRecDelete("")
-    }
-  })
+  const { formData,setFormVisible,recDelete,setRecDelete,setToggle,toggle,formVisible,company,setCompany} = StateCompany()
 
   const handleButtonClick = () => {
     setFormVisible((prev) => !prev);
   };
+  
+  useEffect(() => {
+    handleDelete();
+    loadCompany();
+  }, []);
+
+  const loadCompany = async () => {
+    const result = await api.loadCompany()
+    console.log("rec", result);
+    setCompany(result);
+  }
+
+  const handleDelete = async () => {
+    // console.log(id);
+    await api.deleteCompany(recDelete)
+    loadCompany();
+  };
+
+  console.log(company)
+  console.log(formData)
 
   return (
     <div>
@@ -83,7 +54,7 @@ const AnnouncementsView = () => {
               className="above-table"
               style={{ display: "flex", justifyContent: "space-between" }}
             >
-              {/* <Search search={search} setSearch={setSearch} /> */}
+              
               <div>
                 <Button
                   variant="outlined"
@@ -101,19 +72,18 @@ const AnnouncementsView = () => {
                   ) : (
                     <div className="add">
                       <MdAdd />
-                      ADD ANNOUNCEMENTS
+                      ADD COMPANY
                     </div>
                   )}
                 </Button>
               </div>
             </div>
-
             <Collapse in={formVisible}>
               <Card
                 variant="outlined"
                 style={{ boxShadow: " 1px 1px 10px black" }}
               >
-                <div>
+                <div style={{ marginTop: "20px" }}>
                   <h3
                     style={{
                       textAlign: "center",
@@ -121,16 +91,16 @@ const AnnouncementsView = () => {
                       fontWeight: "600",
                     }}
                   >
-                    ANNOUNCEMENTS
+                    COMPANY
                   </h3>
                   <DialogContent>
-                    <AnnouncementForm />
+                    <CompanyForm/>
                   </DialogContent>
                 </div>
               </Card>
             </Collapse>
-            <br />
-            <AnnouncementTable  announcements={announcements} setRecDelete={setRecDelete}/>
+            <CompanyTable company={company} setRecDelete={setRecDelete}/>
+            <div></div>
           </section>
         </div>
       </div>
@@ -138,4 +108,4 @@ const AnnouncementsView = () => {
   );
 };
 
-export default AnnouncementsView;
+export default CompanyView;

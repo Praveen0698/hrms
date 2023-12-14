@@ -1,8 +1,13 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-// import Dashboard from "../../components/Dashboard";
 import PerformanceIndicatorView from "./PerformanceIndicator/PerformanceIndicatorView";
-import PerformancesAppraisalView from "./PerformanceAppraisal/PerformancesAppraisalView";
+import PerformancesAppraisalView from "./PerformanceAppraisal/Mainfile/PerformancesAppraisalView";
+
+const performanceRoutesData = [
+  { path: "/performance/Performance-Indicator", element: <PerformanceIndicatorView /> },
+  { path: "/performance/Performance-Appraisal", element: <PerformancesAppraisalView  /> },
+ 
+];
 
 
 const RoutingPerformance = () => {
@@ -10,8 +15,9 @@ const RoutingPerformance = () => {
     <div>
       <div className="App">
         <Routes>
-          <Route path="/performance/PerformanceIndicator" exact element={<PerformanceIndicatorView />} />
-          <Route path="/performance/PerformanceAppraisal" exact element={<PerformancesAppraisalView />} />
+          {performanceRoutesData.map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
         </Routes>
       </div>
     </div>
@@ -19,3 +25,11 @@ const RoutingPerformance = () => {
 };
 
 export default RoutingPerformance;
+
+
+
+
+
+
+
+

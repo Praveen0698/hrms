@@ -13,7 +13,7 @@ const StatePolicies = () => {
         title: "",
         description: "",
         createdDate: "",
-        uploadPdf: "",
+        uploadDocument: "",
         createdDate: "",
       });
   return {
