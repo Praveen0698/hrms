@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const StateAnnouncement = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -14,14 +14,14 @@ const StateAnnouncement = () => {
   const [dateError, setDateError] = useState(false);
 
   const [formData, setFormData] = useState({
-    title: " ",
-    startDate: " ",
-    endDate: " ",
-    companyName: " ",
-    locationName: " ",
-    departmentName: " ",
-    summary: " ",
-    description: " ",
+    title: "",
+    startDate: "",
+    endDate: "",
+    companyName: "",
+    locationName: "",
+    departmentName: "",
+    summary: "",
+    description: "",
     createdDate: "",
   });
   return {

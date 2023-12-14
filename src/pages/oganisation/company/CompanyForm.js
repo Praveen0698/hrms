@@ -147,7 +147,7 @@ const CompanyForm = () => {
       setFormData({
         ...formData,
         [name]: value,
-        uploadLogo:file
+        file:file
       });
     } 
   };
@@ -222,8 +222,8 @@ const CompanyForm = () => {
         gst: "",
         uan: "",
         createdDate: "",
-        uploadLogo:null
       });
+      setFile(null)
     } catch (error) {
       console.error("Error creating company:", error.response.data);
       alert("Error creating company. Please check the console for details.");
@@ -488,8 +488,8 @@ console.log(company)
           label="Company Logo"
           type="file"
           fullWidth
-          name="uploadLogo"
-          id="uploadLogo"
+          name="file"
+          id="file"
           value={""}
           onChange={(e) => setFile(e.target.files[0])}
           

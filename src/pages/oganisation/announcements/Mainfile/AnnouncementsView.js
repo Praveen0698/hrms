@@ -20,7 +20,7 @@ import AnnouncementForm from "../AnnouncementForm";
 
 const AnnouncementsView = () => {
   const {
-    
+    formData,
     recDelete,
     setRecDelete,
     
@@ -43,7 +43,7 @@ const AnnouncementsView = () => {
 
   useEffect(() => {
     loadAnnouncements();
-  });
+  },[]);
 
   const loadAnnouncements = async () => {
     const result = await api.loadAnnouncements()
@@ -56,6 +56,7 @@ const AnnouncementsView = () => {
   console.log("loc", location);
   console.log("comp", company);
   console.log(announcements);
+  console.log(formData)
   const handleDelete = async () => {
     await api.deleteAnnouncement(recDelete)
     loadAnnouncements();

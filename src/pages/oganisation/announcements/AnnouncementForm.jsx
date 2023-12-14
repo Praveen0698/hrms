@@ -79,21 +79,20 @@ const AnnouncementForm = () => {
       const handleInputChange = (e) => {
         const { name, value } = e.target;
     
-        const isValidLengthSum = value.length >= 2 && value.length <= 200;
-        const hasNoNumbersSum = !/\d/.test(value); // Check for the presence of numbers
-        setSummaryError(!isValidLengthSum || !hasNoNumbersSum);
+        // const isValidLengthSum = value.length >= 2 && value.length <= 200;
+        // const hasNoNumbersSum = !/\d/.test(value); // Check for the presence of numbers
+        // setSummaryError(!isValidLengthSum || !hasNoNumbersSum);
     
-        const isValidLength = value.length >= 2 && value.length <= 50;
-        const hasNoNumbers = !/\d/.test(value); // Check for the presence of numbers
-        setTitleError(!isValidLength || !hasNoNumbers);
+        // const isValidLength = value.length >= 2 && value.length <= 50;
+        // const hasNoNumbers = !/\d/.test(value); // Check for the presence of numbers
+        // setTitleError(!isValidLength || !hasNoNumbers);
     
-        const isValidDate = value === getCurrentDate();
-        setDateError(!isValidDate);
+        // const isValidDate = value === getCurrentDate();
+        // setDateError(!isValidDate);
     
         setFormData({
           ...formData,
           [e.target.name]: e.target.value,
-          [name]: value,
         });
       };
     
@@ -102,27 +101,20 @@ const AnnouncementForm = () => {
         navigate("/organisation/announcements");
         alert("Added Successfully");
         setFormData({
-          title: " ",
-          startDate: " ",
-          endDate: " ",
-          companyName: " ",
-          locationName: " ",
-          departmentName: " ",
-          summary: " ",
-          description: " ",
+          title: "",
+          startDate: "",
+          endDate: "",
+          companyName: "",
+          locationName: "",
+          departmentName: "",
+          summary: "",
+          description: "",
           createdDate: "",
         });
       };
 
       useEffect(() => {
-       
-        fetchCompany();
-        fetchLocation();
-        fetchDepartment();
-      }, []);
-    
-      
-      const fetchCompany = async () => {
+        const fetchCompany = async () => {
         
           const response = await api.fetchCompanies()
           setCompany(response);
@@ -139,8 +131,16 @@ const AnnouncementForm = () => {
         
           const response = await api.fetchDepartment()
           setDepartment(response);
+        };
         
-      };
+        fetchCompany();
+        fetchLocation();
+        fetchDepartment();
+      }, []);
+    
+      
+     
+      
 
       const handleSubmit = (e) => {
         e.preventDefault();
@@ -158,8 +158,8 @@ const AnnouncementForm = () => {
           value={formData.title}
           onChange={(e) => handleInputChange(e)}
           required
-          error={titleError}
-          helperText={titleError && "Title must be between 2 and 50 characters"}
+          // error={titleError}
+          // helperText={titleError && "Title must be between 2 and 50 characters"}
         />
         <TextField
           margin="dense"
@@ -293,12 +293,12 @@ const AnnouncementForm = () => {
           value={formData.summary}
           onChange={(e) => handleInputChange(e)}
           required
-          error={summaryError}
-          helperText={
-            summaryError
-              ? "Summary must be between 2 and 200 characters and should not contain numbers"
-              : ""
-          }
+          // error={summaryError}
+          // helperText={
+          //   summaryError
+          //     ? "Summary must be between 2 and 200 characters and should not contain numbers"
+          //     : ""
+          // }
         />
         <TextField
           margin="dense"
